@@ -21,7 +21,7 @@ function useFetchFilter() {
       }
     }
     fechtData();
-  }, []);
+  }, [setData]);
 
   return {
     data,

@@ -1,6 +1,11 @@
 export type SWContextType = {
   data: SWData[];
   setData: React.Dispatch<React.SetStateAction<SWData[]>>;
+  inputFilter: string;
+  setInputFilter: React.Dispatch<React.SetStateAction<string>>;
+  handleInputFilter: (event: React.ChangeEvent<HTMLInputElement>) => void
+  dataNameFilter: SWData[];
+  setDataNameFilter: React.Dispatch<React.SetStateAction<SWData[]>>;
 };
 export type SWData = {
   name: string;
