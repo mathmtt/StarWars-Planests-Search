@@ -6,6 +6,9 @@ export type SWContextType = {
   handleInputFilter: (event: React.ChangeEvent<HTMLInputElement>) => void
   dataNameFilter: SWData[];
   setDataNameFilter: React.Dispatch<React.SetStateAction<SWData[]>>;
+  handleInputChange: (event: React.ChangeEvent<HTMLInputElement |
+  HTMLSelectElement>) => void;
+  numericalValuesFilter: NumericalFilter;
 };
 export type SWData = {
   name: string;
@@ -21,6 +24,9 @@ export type SWData = {
   created: string;
   edited: string;
   url: string;
+  columnFilter: string;
+  comparisonFilter: string;
+  valueFilter: string;
 };
 
 export type UserProviderType = {
@@ -42,4 +48,16 @@ export type APItype = {
   created: string;
   edited: string;
   url: string;
+};
+
+export type NumericalFilter = {
+  columnFilter: string;
+  comparisonFilter: string;
+  valueFilter: string;
+};
+
+export const NumericalFilterValues = {
+  columnFilter: 'population',
+  comparisonFilter: 'maior que',
+  valueFilter: '0',
 };
