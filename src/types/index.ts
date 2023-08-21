@@ -9,6 +9,10 @@ export type SWContextType = {
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement |
   HTMLSelectElement>) => void;
   numericalValuesFilter: NumericalFilter;
+  multiplesFiltersState: NumericalFilter[];
+  setMultiplesFiltersState: React
+    .Dispatch<React.SetStateAction<NumericalFilter[]>>;
+  setNumericalValuesFilter: React.Dispatch<React.SetStateAction<NumericalFilter>>;
 };
 export type SWData = {
   name: string;

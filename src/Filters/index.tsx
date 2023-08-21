@@ -1,38 +1,36 @@
 import { useContext } from 'react';
 import SWContext from '../context/SWContext';
 import useFetchFilter from '../hooks/useFetchFilter';
-import { NumericalFilter } from '../types';
+import useMultipleFilter from '../hooks/useMultipleFilter';
+import { NumericalFilterValues } from '../types';
 
 function NumericalFilters() {
   const {
     handleInputChange,
     numericalValuesFilter,
-    dataNameFilter,
-    setDataNameFilter } = useContext(SWContext);
+    multiplesFiltersState,
+    setNumericalValuesFilter,
+    setMultiplesFiltersState,
+  } = useContext(SWContext);
   const { columnFilter, comparisonFilter, valueFilter } = numericalValuesFilter;
   const { data } = useFetchFilter();
-
+  const { dataNameFilter, multiplesFilters } = useMultipleFilter();
   const handleSubmitButtonFilter = (event: React.
     FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (comparisonFilter === 'maior que') {
-      const filterNumerical = data
-        .filter((item) => Number(item[columnFilter as keyof NumericalFilter])
-           > Number(valueFilter));
-      setDataNameFilter(filterNumerical);
-    } else if (comparisonFilter === 'menor que') {
-      const filterNumerical = data
-        .filter((item) => Number(item[columnFilter as keyof NumericalFilter])
-           < Number(valueFilter));
-      setDataNameFilter(filterNumerical);
-    } else if (comparisonFilter === 'igual a') {
-      const filterNumerical = data
-        .filter((item) => Number(item[columnFilter as keyof NumericalFilter])
-           === Number(valueFilter));
-      setDataNameFilter(filterNumerical);
+    setMultiplesFiltersState([
+      ...multiplesFiltersState,
+      numericalValuesFilter,
+    ]);
+
+    if (dataNameFilter.length === 0) {
+      multiplesFilters(data);
+    } else {
+      multiplesFilters(dataNameFilter);
     }
+    setNumericalValuesFilter(NumericalFilterValues);
   };
-  console.log(dataNameFilter);
+
   return (
     <>
       <form onSubmit={ handleSubmitButtonFilter }>
@@ -105,6 +103,16 @@ function NumericalFilters() {
         <button>Ordenar</button>
         <button>Remover Filtros</button>
       </form>
+      {
+        multiplesFiltersState.map((filtered) => (
+          <p key={ `${filtered.columnFilter}${filtered.valueFilter}` }>
+            {filtered.columnFilter}
+            {' '}
+            {filtered.comparisonFilter}
+            {' '}
+            {filtered.valueFilter}
+          </p>))
+      }
 
     </>
   );
