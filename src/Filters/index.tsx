@@ -1,10 +1,14 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import SWContext from '../context/SWContext';
 import useFetchFilter from '../hooks/useFetchFilter';
 import useMultipleFilter from '../hooks/useMultipleFilter';
 import { NumericalFilterValues } from '../types';
 
 function NumericalFilters() {
+  const optionsCollumn = [
+    'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water'];
+
+  const [optionsState, setOptionsState] = useState(optionsCollumn);
   const {
     handleInputChange,
     numericalValuesFilter,
@@ -30,6 +34,14 @@ function NumericalFilters() {
     }
     setNumericalValuesFilter(NumericalFilterValues);
   };
+  useEffect(() => {
+    if (multiplesFiltersState.length > 0) {
+      const collumn = multiplesFiltersState.map((filters) => filters.columnFilter);
+      const newOptionsCollumn = optionsCollumn
+        .filter((option) => !collumn.includes(option));
+      setOptionsState(newOptionsCollumn);
+    }
+  }, [multiplesFiltersState]);
 
   return (
     <>
@@ -43,11 +55,11 @@ function NumericalFilters() {
             onChange={ handleInputChange }
             value={ columnFilter }
           >
-            <option value="population">population</option>
-            <option value="orbital_period">orbital_period</option>
-            <option value="diameter">diameter</option>
-            <option value="rotation_period">rotation_period</option>
-            <option value="surface_water">surface_water</option>
+            {
+              optionsState.map((option) => (
+                <option value={ option } key={ option }>{ option }</option>
+              ))
+           }
           </select>
         </label>
         <label>
