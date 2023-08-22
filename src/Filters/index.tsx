@@ -1,8 +1,8 @@
 import { useContext, useState, useEffect } from 'react';
 import SWContext from '../context/SWContext';
 import useFetchFilter from '../hooks/useFetchFilter';
-import useMultipleFilter from '../hooks/useMultipleFilter';
 import { NumericalFilterValues } from '../types';
+import useFilter from '../hooks/useMultipleFilter';
 
 function NumericalFilters() {
   const optionsCollumn = [
@@ -15,33 +15,40 @@ function NumericalFilters() {
     multiplesFiltersState,
     setNumericalValuesFilter,
     setMultiplesFiltersState,
+    setDataNameFilter,
   } = useContext(SWContext);
-  const { columnFilter, comparisonFilter, valueFilter } = numericalValuesFilter;
+  const { multiplesFilters } = useFilter();
   const { data } = useFetchFilter();
-  const { dataNameFilter, multiplesFilters } = useMultipleFilter();
   const handleSubmitButtonFilter = (event: React.
     FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const filtered = numericalValuesFilter;
     setMultiplesFiltersState([
       ...multiplesFiltersState,
-      numericalValuesFilter,
+      { ...filtered },
     ]);
-
-    if (dataNameFilter.length === 0) {
-      multiplesFilters(data);
-    } else {
-      multiplesFilters(dataNameFilter);
-    }
     setNumericalValuesFilter(NumericalFilterValues);
   };
   useEffect(() => {
     if (multiplesFiltersState.length > 0) {
-      const collumn = multiplesFiltersState.map((filters) => filters.columnFilter);
+      const collumn = multiplesFiltersState.map((filters) => (filters.columnFilter));
       const newOptionsCollumn = optionsCollumn
         .filter((option) => !collumn.includes(option));
       setOptionsState(newOptionsCollumn);
     }
+    multiplesFilters(data, multiplesFiltersState);
   }, [multiplesFiltersState]);
+
+  const handleDeleteFilter = (columnFilter: string) => {
+    const updatedFilters = multiplesFiltersState
+      .filter((obj) => obj.columnFilter !== columnFilter);
+    setMultiplesFiltersState(updatedFilters);
+    setOptionsState([
+      ...optionsState,
+      columnFilter,
+    ]);
+    setDataNameFilter([]);
+  };
 
   return (
     <>
@@ -53,7 +60,7 @@ function NumericalFilters() {
             name="columnFilter"
             data-testid="column-filter"
             onChange={ handleInputChange }
-            value={ columnFilter }
+            value={ numericalValuesFilter.columnFilter }
           >
             {
               optionsState.map((option) => (
@@ -69,7 +76,7 @@ function NumericalFilters() {
             name="comparisonFilter"
             data-testid="comparison-filter"
             onChange={ handleInputChange }
-            value={ comparisonFilter }
+            value={ numericalValuesFilter.comparisonFilter }
           >
             <option value="maior que">maior que</option>
             <option value="menor que">menor que</option>
@@ -82,7 +89,7 @@ function NumericalFilters() {
             name="valueFilter"
             data-testid="value-filter"
             onChange={ handleInputChange }
-            value={ valueFilter }
+            value={ numericalValuesFilter.valueFilter }
           />
         </label>
         <button
@@ -93,9 +100,17 @@ function NumericalFilters() {
           Filtrar
         </button>
       </form>
-      <form action="submit">
+      <form>
         <label htmlFor="">
           Ordenar
+          <button
+            type="button"
+            onClick={ () => setMultiplesFiltersState([]) }
+            data-testid="button-remove-filters"
+          >
+            Remover Filtros
+
+          </button>
           <select name="" id="">
             <option value="">uma opçao aqui</option>
           </select>
@@ -117,15 +132,26 @@ function NumericalFilters() {
       </form>
       {
         multiplesFiltersState.map((filtered) => (
-          <p key={ `${filtered.columnFilter}${filtered.valueFilter}` }>
-            {filtered.columnFilter}
-            {' '}
-            {filtered.comparisonFilter}
-            {' '}
-            {filtered.valueFilter}
-          </p>))
-      }
+          <div
+            key={ `${Math.random()}` }
+            data-testid="filter"
+          >
+            <p>
+              {filtered.columnFilter}
+              {' '}
+              {filtered.comparisonFilter}
+              {' '}
+              {filtered.valueFilter}
+            </p>
+            <button
+              className="button-delete"
+              onClick={ () => handleDeleteFilter(filtered.columnFilter) }
+            >
+              X
+            </button>
 
+          </div>))
+      }
     </>
   );
 }

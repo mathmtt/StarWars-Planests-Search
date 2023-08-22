@@ -1,31 +1,39 @@
 import { useContext } from 'react';
 import SWContext from '../context/SWContext';
-import { SWData } from '../types';
+import { SWData, NumericalFilter } from '../types';
 
-function useMultipleFilter() {
+function useFilter() {
   const {
     dataNameFilter,
     setDataNameFilter,
-    numericalValuesFilter } = useContext(SWContext);
-  const { comparisonFilter, columnFilter, valueFilter } = numericalValuesFilter;
+  } = useContext(SWContext);
 
-  const multiplesFilters = (dataApi: SWData[]) => {
-    if (comparisonFilter === 'maior que') {
-      const filterNumerical = dataApi
-        .filter((obj) => Number(obj[columnFilter as keyof SWData])
-             > Number(valueFilter));
-      setDataNameFilter(filterNumerical);
-    } else if (comparisonFilter === 'menor que') {
-      const filterNumerical = dataApi
-        .filter((obj) => Number(obj[columnFilter as keyof SWData])
-             < Number(valueFilter));
-      setDataNameFilter(filterNumerical);
-    } else if (comparisonFilter === 'igual a') {
-      const filterNumerical = dataApi
-        .filter((obj) => Number(obj[columnFilter as keyof SWData])
-             === Number(valueFilter));
-      setDataNameFilter(filterNumerical);
-    } return false;
+  const multiplesFilters = (
+    dataApi: SWData[],
+    valuesFilter: NumericalFilter[],
+  ) => {
+    valuesFilter.forEach((value) => {
+      if (value.comparisonFilter === 'maior que') {
+        const dataFilterNumerical = dataApi
+          .filter((obj) => Number(obj[value
+            .columnFilter as keyof SWData])
+               > Number(value.valueFilter));
+        dataApi = dataFilterNumerical;
+      } else if (value.comparisonFilter === 'menor que') {
+        const filterNumerical = dataApi
+          .filter((obj) => Number(obj[value
+            .columnFilter as keyof SWData])
+               < Number(value.valueFilter));
+        dataApi = filterNumerical;
+      } else if (value.comparisonFilter === 'igual a') {
+        const filterNumerical = dataApi
+          .filter((obj) => Number(obj[value
+            .columnFilter as keyof SWData])
+               === Number(value.valueFilter));
+        dataApi = filterNumerical;
+      }
+    });
+    setDataNameFilter(dataApi);
   };
 
   return {
@@ -35,4 +43,4 @@ function useMultipleFilter() {
   };
 }
 
-export default useMultipleFilter;
+export default useFilter;
