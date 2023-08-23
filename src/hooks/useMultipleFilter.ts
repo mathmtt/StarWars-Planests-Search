@@ -6,6 +6,8 @@ function useFilter() {
   const {
     dataNameFilter,
     setDataNameFilter,
+    orderState,
+    data,
   } = useContext(SWContext);
 
   const multiplesFilters = (
@@ -36,10 +38,44 @@ function useFilter() {
     setDataNameFilter(dataApi);
   };
 
+  const handleSortOrder = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    event.preventDefault();
+    const filterOrder = orderState;
+    const { column, sort } = filterOrder;
+    console.log(filterOrder);
+    let planetData = dataNameFilter;
+
+    if (dataNameFilter.length === 0) {
+      planetData = data;
+    }
+
+    const newDataFilter = planetData.filter((obj) => (
+      obj[column as keyof SWData] !== 'unknown'));
+
+    const newDataUnknown = planetData.filter((obj) => (
+      obj[column as keyof SWData] === 'unknown'));
+
+    const sortData = newDataFilter.sort((a, b) => {
+      if (sort === 'ASC') {
+        return Number(a[column as keyof SWData])
+         - Number(b[column as keyof SWData]);
+      } if (sort === 'DESC') {
+        return Number(b[column as keyof SWData])
+        - Number(a[column as keyof SWData]);
+      }
+      return 0;
+    });
+    sortData.push(...newDataUnknown);
+    return setDataNameFilter(sortData);
+  };
+
   return {
     dataNameFilter,
     setDataNameFilter,
     multiplesFilters,
+    handleSortOrder,
   };
 }
 

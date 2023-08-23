@@ -8,6 +8,7 @@ export type SWContextType = {
   setDataNameFilter: React.Dispatch<React.SetStateAction<SWData[]>>;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement |
   HTMLSelectElement>) => void;
+  orderState: OrderStateType;
   numericalValuesFilter: NumericalFilter;
   multiplesFiltersState: NumericalFilter[];
   setMultiplesFiltersState: React
@@ -64,4 +65,9 @@ export const NumericalFilterValues = {
   columnFilter: 'population',
   comparisonFilter: 'maior que',
   valueFilter: '0',
+};
+
+export type OrderStateType = {
+  column: string;
+  sort: string;
 };

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import SWContext from './SWContext';
 import { SWData, UserProviderType, NumericalFilter,
-  NumericalFilterValues } from '../types';
+  NumericalFilterValues, OrderStateType } from '../types';
 
 function SWProvider({ children }: UserProviderType) {
   const [data, setData] = useState<SWData[]>([]);
@@ -14,6 +14,11 @@ function SWProvider({ children }: UserProviderType) {
     numericalValuesFilter,
     setNumericalValuesFilter,
   ] = useState(NumericalFilterValues);
+
+  const [orderState, setOrderState] = useState<OrderStateType>({
+    column: '',
+    sort: '',
+  });
 
   const handleInputFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const valueInput = event.target.value;
@@ -46,6 +51,8 @@ function SWProvider({ children }: UserProviderType) {
     setNumericalValuesFilter,
     multiplesFiltersState,
     setMultiplesFiltersState,
+    orderState,
+    setOrderState,
   };
   return (
     <SWContext.Provider value={ stateglobal }>
