@@ -1,28 +1,30 @@
-import { useContext, useState, useEffect } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import SWContext from '../context/SWContext';
 import useFetchFilter from '../hooks/useFetchFilter';
-import { NumericalFilterValues } from '../types';
 import useFilter from '../hooks/useMultipleFilter';
+import { NumericalFilterValues } from '../types';
 
 function NumericalFilters() {
   const optionsCollumn = [
     'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water'];
-
-  const [optionsState, setOptionsState] = useState(optionsCollumn);
+  const [optionsCollumnState, setOptionsCollumnState] = useState(optionsCollumn);
   const {
     handleInputChange,
     numericalValuesFilter,
     multiplesFiltersState,
     setNumericalValuesFilter,
     setMultiplesFiltersState,
-    setDataNameFilter,
+    handleChangeOrder,
+    orderState,
   } = useContext(SWContext);
-  const { multiplesFilters } = useFilter();
+  const { multiplesFilters, handleSortOrder } = useFilter();
   const { data } = useFetchFilter();
+
   const handleSubmitButtonFilter = (event: React.
     FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const filtered = numericalValuesFilter;
+
     setMultiplesFiltersState([
       ...multiplesFiltersState,
       { ...filtered },
@@ -34,22 +36,19 @@ function NumericalFilters() {
       const collumn = multiplesFiltersState.map((filters) => (filters.columnFilter));
       const newOptionsCollumn = optionsCollumn
         .filter((option) => !collumn.includes(option));
-      setOptionsState(newOptionsCollumn);
+      setOptionsCollumnState(newOptionsCollumn);
     }
     multiplesFilters(data, multiplesFiltersState);
   }, [multiplesFiltersState]);
-
   const handleDeleteFilter = (columnFilter: string) => {
     const updatedFilters = multiplesFiltersState
       .filter((obj) => obj.columnFilter !== columnFilter);
     setMultiplesFiltersState(updatedFilters);
-    setOptionsState([
-      ...optionsState,
+    setOptionsCollumnState([
+      ...optionsCollumnState,
       columnFilter,
     ]);
-    setDataNameFilter([]);
   };
-
   return (
     <>
       <form onSubmit={ handleSubmitButtonFilter }>
@@ -63,7 +62,7 @@ function NumericalFilters() {
             value={ numericalValuesFilter.columnFilter }
           >
             {
-              optionsState.map((option) => (
+              optionsCollumnState.map((option) => (
                 <option value={ option } key={ option }>{ option }</option>
               ))
            }
@@ -101,34 +100,56 @@ function NumericalFilters() {
         </button>
       </form>
       <form>
-        <label htmlFor="">
+        <label>
           Ordenar
-          <button
-            type="button"
-            onClick={ () => setMultiplesFiltersState([]) }
-            data-testid="button-remove-filters"
+          <select
+            name="column"
+            id="column-sort"
+            data-testid="column-sort"
+            value={ orderState.column }
+            onChange={ handleChangeOrder }
           >
-            Remover Filtros
-
-          </button>
-          <select name="" id="">
-            <option value="">uma opçao aqui</option>
+            {
+              optionsCollumn.map((collumn) => (
+                <option value={ collumn } key={ collumn }>{ collumn }</option>))
+            }
           </select>
         </label>
         <label>
           <input
-            type="checkbox"
+            type="radio"
+            value="ASC"
+            name="sort"
+            checked={ orderState.sort === 'ASC' }
+            onChange={ handleChangeOrder }
+            data-testid="column-sort-input-asc"
           />
           Ascendente
         </label>
         <label>
           <input
-            type="checkbox"
+            type="radio"
+            value="DESC"
+            name="sort"
+            checked={ orderState.sort === 'DESC' }
+            onChange={ handleChangeOrder }
+            data-testid="column-sort-input-desc"
           />
           Descendente
         </label>
-        <button>Ordenar</button>
-        <button>Remover Filtros</button>
+        <button
+          onClick={ handleSortOrder }
+          data-testid="column-sort-button"
+        >
+          Ordenar
+        </button>
+        <button
+          type="button"
+          onClick={ () => setMultiplesFiltersState([]) }
+          data-testid="button-remove-filters"
+        >
+          Remover Filtros
+        </button>
       </form>
       {
         multiplesFiltersState.map((filtered) => (
@@ -149,7 +170,6 @@ function NumericalFilters() {
             >
               X
             </button>
-
           </div>))
       }
     </>

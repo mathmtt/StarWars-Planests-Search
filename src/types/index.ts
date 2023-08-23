@@ -14,6 +14,9 @@ export type SWContextType = {
   setMultiplesFiltersState: React
     .Dispatch<React.SetStateAction<NumericalFilter[]>>;
   setNumericalValuesFilter: React.Dispatch<React.SetStateAction<NumericalFilter>>;
+  setOrderState: React.Dispatch<React.SetStateAction<OrderStateType>>;
+  handleChangeOrder: (event: React.
+    ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 };
 export type SWData = {
   name: string;
@@ -70,4 +73,9 @@ export const NumericalFilterValues = {
 export type OrderStateType = {
   column: string;
   sort: string;
+};
+
+export const INICIAL_ORDER = {
+  column: 'population',
+  sort: 'ASC',
 };

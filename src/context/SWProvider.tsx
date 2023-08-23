@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import SWContext from './SWContext';
 import { SWData, UserProviderType, NumericalFilter,
-  NumericalFilterValues, OrderStateType } from '../types';
+  NumericalFilterValues, OrderStateType, INICIAL_ORDER } from '../types';
 
 function SWProvider({ children }: UserProviderType) {
   const [data, setData] = useState<SWData[]>([]);
   const [inputFilter, setInputFilter] = useState<string>('');
   const [dataNameFilter, setDataNameFilter] = useState<SWData[]>([]);
+  const [orderState, setOrderState] = useState<OrderStateType>(INICIAL_ORDER);
   const [
     multiplesFiltersState,
     setMultiplesFiltersState] = useState<NumericalFilter[]>([]);
@@ -15,10 +16,14 @@ function SWProvider({ children }: UserProviderType) {
     setNumericalValuesFilter,
   ] = useState(NumericalFilterValues);
 
-  const [orderState, setOrderState] = useState<OrderStateType>({
-    column: '',
-    sort: '',
-  });
+  const handleChangeOrder = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = event.target;
+    setOrderState({
+      ...orderState,
+      [name]: value });
+  };
 
   const handleInputFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const valueInput = event.target.value;
@@ -53,6 +58,7 @@ function SWProvider({ children }: UserProviderType) {
     setMultiplesFiltersState,
     orderState,
     setOrderState,
+    handleChangeOrder,
   };
   return (
     <SWContext.Provider value={ stateglobal }>

@@ -30,7 +30,7 @@ function Table() {
           { (dataNameFilter.length === 0)
             ? data.map((item) => (
               <tr key={ item.name }>
-                <td>{item.name}</td>
+                <td data-testid="planet-name">{item.name}</td>
                 <td>{item.rotation_period}</td>
                 <td>{item.orbital_period}</td>
                 <td>{item.diameter}</td>
@@ -47,7 +47,7 @@ function Table() {
             ))
             : dataNameFilter.map((item) => (
               <tr key={ item.name }>
-                <td>{item.name}</td>
+                <td data-testid="planet-name">{item.name}</td>
                 <td>{item.rotation_period}</td>
                 <td>{item.orbital_period}</td>
                 <td>{item.diameter}</td>
